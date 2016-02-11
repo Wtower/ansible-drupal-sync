@@ -1,0 +1,30 @@
+---
+# Sync local Drupal staging server
+#
+# Extra variables:
+# - local_host: provide the local staging host
+# - site: provide the site from conf to sync
+#
+# Example: ansible-playbook drupal_back_sync.yml -e "local_host=dev-p5qc site=site.com"
+
+- hosts: "{{ local_host }}"
+
+  # speed up playbook, provide ansible_user_id from group_vars
+  gather_facts: no
+
+  vars_files:
+    # specify drupal sites configuration
+    - ../conf/drupal_sites.yml
+
+  vars:
+    # specify sync direction for sync role
+    dest: staging
+
+  pre_tasks:
+    - name: Checking configuration
+      fail: msg="No drush alias for production server of [{{ site }}] is defined."
+      when: "drupal_sites[site].prod.alias is not defined"
+
+  roles:
+    - drupal_perms
+    - drupal_sync

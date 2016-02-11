@@ -1,0 +1,20 @@
+---
+# Sync Drupal
+
+- name: Setting source alias as staging
+  set_fact:
+    source: "{{ drupal_sites[site].staging.drush_alias }}"
+    dest: "{{ drupal_sites[site].prod.alias }}"
+  when: dest == 'prod'
+
+- name: Setting source alias as production
+  set_fact:
+    source: "{{ drupal_sites[site].prod.alias }}"
+    dest: "{{ drupal_sites[site].staging.alias }}"
+  when: dest == 'staging'
+
+- name: Syncing files
+  command: drush --quiet rsync @{{ source }} @{{ dest }}
+
+- name: Syncing db
+  command: drush --quiet sql-sync @{{ source }} @{{ dest }}

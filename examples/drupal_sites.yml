@@ -1,0 +1,9 @@
+---
+drupal_sites:
+  site.com:
+    staging:
+      path: /var/www/vhosts/site.com/httpdocs
+      alias: site.dev-p5qc
+    prod:
+      path: /var/www/vhosts/site.com
+      alias: site.com
